@@ -296,12 +296,6 @@
           <path d="M2 12A10 10 0 0 1 12 2"/>
         </svg>
       </button>
-      <button class="icon-btn" id="handsfree-btn" aria-label="Modo mãos-livres" title="Modo mãos-livres (ouve de novo após a NEXUS falar)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
-          <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
-        </svg>
-      </button>
       <button class="icon-btn active" id="voice-toggle-btn" aria-label="Ativar/desativar voz da NEXUS" title="Ativar/desativar a voz da NEXUS">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M11 5 6 9H2v6h4l5 4V5z"/>
@@ -619,15 +613,13 @@ input.addEventListener('input', autoGrow);
 
 /* ================================================================
    SISTEMA DE VOZ — estilo J.A.R.V.I.S. (fala e ouve em pt-BR)
-   Não mexe no WEBHOOK_URL nem na lógica de envio já existente.
+   Só ativa o microfone quando o usuário diz "Jarvis".
 ================================================================= */
 const micBtn = document.getElementById('mic-btn');
 const voiceToggleBtn = document.getElementById('voice-toggle-btn');
-const handsFreeBtn = document.getElementById('handsfree-btn');
 const wakeWordBtn = document.getElementById('wakeword-btn');
 
 let voiceEnabled = true;     // a NEXUS fala as respostas em voz alta
-let handsFreeMode = false;   // depois de falar, volta a ouvir sozinha
 let wakeWordMode = false;    // fica escutando em segundo plano à espera de "Jarvis!"
 let isListening = false;     // capturando o comando do usuário
 let wakeListening = false;   // escutando em segundo plano à espera da palavra-chave
@@ -670,8 +662,7 @@ function speak(text, onDone){
     setCoreState('idle');
     statusText.textContent = 'ONLINE';
     if(onDone) onDone();
-    if(handsFreeMode) startListening();
-    else maybeResumeWakeWord();
+    maybeResumeWakeWord();
   };
   utter.onerror = () => {
     setCoreState('idle');
@@ -818,11 +809,6 @@ voiceToggleBtn?.addEventListener('click', () => {
   voiceEnabled = !voiceEnabled;
   voiceToggleBtn.classList.toggle('active', voiceEnabled);
   if(!voiceEnabled) window.speechSynthesis.cancel();
-});
-
-handsFreeBtn?.addEventListener('click', () => {
-  handsFreeMode = !handsFreeMode;
-  handsFreeBtn.classList.toggle('active', handsFreeMode);
 });
 
 wakeWordBtn?.addEventListener('click', () => {
