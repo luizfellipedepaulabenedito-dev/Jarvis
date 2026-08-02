@@ -758,7 +758,24 @@ if(SpeechRecognitionAPI){
     }
   };
 
-  wakeRecognition.onerror = () => { wakeListening = false; };
+  wakeRecognition.onerror = (e) => {
+    wakeListening = false;
+    if(e.error === 'not-allowed' || e.error === 'service-not-allowed'){
+      wakeWordMode = false;
+      wakeWordBtn.classList.remove('armed');
+      const b = addMessage('ai', 'Permissão de microfone negada ou bloqueada. Verifique o ícone de cadeado/câmera na barra de endereço do navegador e permita o uso do microfone para este site.');
+      b.classList.add('error');
+    } else if(e.error === 'audio-capture'){
+      wakeWordMode = false;
+      wakeWordBtn.classList.remove('armed');
+      const b = addMessage('ai', 'Nenhum microfone foi encontrado. Verifique se há um microfone conectado e ativo no sistema.');
+      b.classList.add('error');
+    } else if(e.error === 'network'){
+      const b = addMessage('ai', 'Erro de rede no reconhecimento de voz. O reconhecimento de fala do Chrome depende de conexão com a internet — verifique sua conexão.');
+      b.classList.add('error');
+    }
+    // outros erros (ex: "no-speech", "aborted") são normais em escuta contínua e são reiniciados automaticamente
+  };
 
   wakeRecognition.onend = () => {
     wakeListening = false;
