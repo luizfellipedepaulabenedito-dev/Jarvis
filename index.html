@@ -780,7 +780,7 @@ function onWakeWordDetected(){
   stopWakeListening();
   statusText.textContent = 'ATIVADA';
   setCoreState('speaking');
-  speak('Diga.', () => { startListening(); });
+  speak('Olá senhor, como posso ajudar?.', () => { startListening(); });
 }
 
 function stopListeningUI(){
