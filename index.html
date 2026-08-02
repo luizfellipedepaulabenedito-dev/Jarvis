@@ -3,24 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXUS — IA do Futuro</title>
+<title>J.A.R.V.I.S. — Interface de IA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg-void: #050012;
-    --bg-panel: #0c0620;
-    --bg-panel-2: #100a2a;
-    --magenta: #ff2ec4;
-    --cyan: #00e6ff;
-    --violet: #9d4eff;
-    --violet-soft: #7b5cff;
-    --text-hi: #f1ecff;
-    --text-mid: #a79bd6;
-    --text-dim: #6b5f96;
-    --danger: #ff5470;
-    --line: rgba(157, 78, 255, 0.18);
+    --bg-void: #060402;
+    --bg-panel: #100a05;
+    --bg-panel-2: #150e07;
+    --orange: #ff7a1a;
+    --orange-hot: #ff9500;
+    --amber: #ffb347;
+    --ember: #ff3d00;
+    --text-hi: #fff2e4;
+    --text-mid: #c99a6e;
+    --text-dim: #7a5a3c;
+    --danger: #ff3d00;
+    --line: rgba(255, 122, 26, 0.22);
   }
 
   *{ box-sizing: border-box; }
@@ -29,7 +29,7 @@
     margin:0;
     background: var(--bg-void);
     color: var(--text-hi);
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Rajdhani', sans-serif;
     overflow:hidden;
     -webkit-font-smoothing:antialiased;
   }
@@ -42,29 +42,40 @@
   .mesh{
     position:fixed; inset:0; z-index:0; pointer-events:none;
     background:
-      radial-gradient(600px circle at 15% 20%, rgba(255,46,196,0.16), transparent 60%),
-      radial-gradient(700px circle at 85% 15%, rgba(0,230,255,0.14), transparent 60%),
-      radial-gradient(800px circle at 50% 100%, rgba(157,78,255,0.18), transparent 60%);
+      radial-gradient(650px circle at 15% 15%, rgba(255,122,26,0.14), transparent 60%),
+      radial-gradient(700px circle at 88% 10%, rgba(255,61,0,0.10), transparent 60%),
+      radial-gradient(900px circle at 50% 105%, rgba(255,149,0,0.14), transparent 60%);
     animation: meshdrift 18s ease-in-out infinite alternate;
   }
   @keyframes meshdrift{
     0%{ filter:hue-rotate(0deg) brightness(1); transform: scale(1) translateY(0); }
-    100%{ filter:hue-rotate(25deg) brightness(1.08); transform: scale(1.06) translateY(-1.5%); }
+    100%{ filter:hue-rotate(-8deg) brightness(1.1); transform: scale(1.06) translateY(-1.5%); }
   }
   .grid-overlay{
     position:fixed; inset:0; z-index:0; pointer-events:none;
     background-image:
-      linear-gradient(rgba(157,78,255,0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(157,78,255,0.05) 1px, transparent 1px);
+      linear-gradient(rgba(255,122,26,0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,122,26,0.055) 1px, transparent 1px);
     background-size: 42px 42px;
     mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 40%, transparent 90%);
     opacity:0.7;
   }
   .scanline{
     position:fixed; inset:0; z-index:1; pointer-events:none;
-    background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px);
+    background: repeating-linear-gradient(to bottom, rgba(255,180,90,0.02) 0px, rgba(255,180,90,0.02) 1px, transparent 1px, transparent 3px);
     opacity:0.4;
   }
+  .corner-frame{
+    position:fixed; inset:14px; z-index:1; pointer-events:none;
+    border: 1px solid rgba(255,122,26,0.12);
+  }
+  .corner-frame::before, .corner-frame::after{
+    content:''; position:absolute; width:26px; height:26px;
+    border: 2px solid var(--orange-hot);
+    opacity:0.55;
+  }
+  .corner-frame::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .corner-frame::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
 
   /* ---------- layout ---------- */
   .app{
@@ -85,8 +96,8 @@
   .core-mini svg{ width:100%; height:100%; overflow:visible; }
 
   .brand-text h1{
-    margin:0; font-size:19px; font-weight:700; letter-spacing:2px;
-    background: linear-gradient(90deg, var(--cyan), var(--magenta) 60%, var(--violet));
+    margin:0; font-family:'Orbitron', sans-serif; font-size:19px; font-weight:700; letter-spacing:4px;
+    background: linear-gradient(90deg, var(--amber), var(--orange-hot) 55%, var(--ember));
     -webkit-background-clip:text; background-clip:text; color:transparent;
     background-size:200% auto;
     animation: shine 6s linear infinite;
@@ -96,22 +107,22 @@
     font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px;
     color: var(--text-dim); display:flex; align-items:center; gap:6px; margin-top:2px;
   }
-  .dot{ width:6px; height:6px; border-radius:50%; background: var(--cyan); box-shadow:0 0 8px var(--cyan);
+  .dot{ width:6px; height:6px; border-radius:50%; background: var(--orange-hot); box-shadow:0 0 8px var(--orange-hot);
     animation: blink 1.6s ease-in-out infinite; }
   @keyframes blink{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
 
   .icon-btn{
-    width:38px; height:38px; border-radius:10px;
-    border:1px solid var(--line); background: rgba(157,78,255,0.06);
+    width:38px; height:38px; border-radius:8px;
+    border:1px solid var(--line); background: rgba(255,122,26,0.06);
     color: var(--text-mid); display:flex; align-items:center; justify-content:center;
     cursor:pointer; transition: all .25s ease;
   }
-  .icon-btn:hover{ color:var(--text-hi); border-color: var(--violet-soft); box-shadow:0 0 16px rgba(157,78,255,0.35); transform: translateY(-1px); }
-  .icon-btn.active{ color: var(--bg-void); background: linear-gradient(135deg, var(--cyan), var(--violet)); border-color: transparent; box-shadow:0 0 16px rgba(0,230,255,0.45); }
-  .icon-btn.armed{ color:var(--cyan); border-color: var(--cyan); animation: armedpulse 2.4s ease-in-out infinite; }
+  .icon-btn:hover{ color:var(--text-hi); border-color: var(--orange-hot); box-shadow:0 0 16px rgba(255,122,26,0.35); transform: translateY(-1px); }
+  .icon-btn.active{ color: var(--bg-void); background: linear-gradient(135deg, var(--orange-hot), var(--ember)); border-color: transparent; box-shadow:0 0 16px rgba(255,122,26,0.5); }
+  .icon-btn.armed{ color:var(--orange-hot); border-color: var(--orange-hot); animation: armedpulse 2.4s ease-in-out infinite; }
   @keyframes armedpulse{
-    0%,100%{ box-shadow: 0 0 6px -2px rgba(0,230,255,0.4); }
-    50%{ box-shadow: 0 0 18px 1px rgba(0,230,255,0.7); }
+    0%,100%{ box-shadow: 0 0 6px -2px rgba(255,122,26,0.4); }
+    50%{ box-shadow: 0 0 18px 1px rgba(255,122,26,0.75); }
   }
   .header-controls{ display:flex; align-items:center; gap:8px; }
 
@@ -123,22 +134,23 @@
   .core-big{ width:180px; height:180px; position:relative; }
   .core-big svg{ width:100%; height:100%; overflow:visible; }
   .core-stage h2{
-    margin:0; font-size:22px; font-weight:600; color: var(--text-hi); letter-spacing:0.5px;
+    margin:0; font-family:'Orbitron', sans-serif; font-size:20px; font-weight:700; color: var(--text-hi); letter-spacing:1.5px;
+    text-transform:uppercase;
   }
-  .core-stage p{ margin:0; color:var(--text-dim); font-size:14px; max-width:360px; line-height:1.6; }
+  .core-stage p{ margin:0; color:var(--text-dim); font-size:15px; max-width:380px; line-height:1.6; font-weight:500; }
   .pulse-hint{
-    font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--violet-soft);
-    letter-spacing:2px; text-transform:uppercase; opacity:0.8;
+    font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--orange);
+    letter-spacing:2px; text-transform:uppercase; opacity:0.85;
   }
 
   /* ---------- chat transcript ---------- */
   .transcript{
     flex:1; overflow-y:auto; padding: 20px 4px 10px;
     display:flex; flex-direction:column; gap:16px;
-    scrollbar-width: thin; scrollbar-color: var(--violet-soft) transparent;
+    scrollbar-width: thin; scrollbar-color: var(--orange) transparent;
   }
   .transcript::-webkit-scrollbar{ width:6px; }
-  .transcript::-webkit-scrollbar-thumb{ background: var(--violet-soft); border-radius:6px; }
+  .transcript::-webkit-scrollbar-thumb{ background: var(--orange); border-radius:6px; }
 
   .msg{ display:flex; gap:10px; max-width:82%; animation: rise .45s cubic-bezier(.2,.8,.2,1) both; }
   @keyframes rise{ from{ opacity:0; transform: translateY(14px); } to{ opacity:1; transform:translateY(0); } }
@@ -148,33 +160,35 @@
   .avatar{ width:32px; height:32px; border-radius:50%; flex-shrink:0; position:relative; margin-top:2px; }
   .avatar svg{ width:100%; height:100%; overflow:visible; }
   .avatar.user-av{
-    background: linear-gradient(135deg, var(--violet), var(--magenta));
+    background: linear-gradient(135deg, #3a2a1a, #6b3e1a);
     display:flex; align-items:center; justify-content:center;
-    font-size:12px; font-weight:700; color:#fff;
-    box-shadow:0 0 14px rgba(255,46,196,0.35);
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; font-weight:700; color:var(--amber);
+    box-shadow:0 0 14px rgba(255,122,26,0.3);
+    border: 1px solid var(--line);
   }
 
   .bubble{
-    padding: 12px 16px; border-radius:16px; font-size:14.5px; line-height:1.6;
+    padding: 12px 16px; border-radius:10px; font-size:15.5px; line-height:1.6; font-weight:500;
     word-wrap:break-word; white-space:pre-wrap;
   }
   .msg.user .bubble{
-    background: linear-gradient(135deg, rgba(157,78,255,0.35), rgba(255,46,196,0.28));
-    border:1px solid rgba(255,46,196,0.3);
-    border-top-right-radius:4px;
+    background: linear-gradient(135deg, rgba(255,149,0,0.22), rgba(255,61,0,0.16));
+    border:1px solid rgba(255,122,26,0.35);
+    border-top-right-radius:2px;
     color: var(--text-hi);
   }
   .msg.ai .bubble{
     background: var(--bg-panel);
     border:1px solid var(--line);
-    border-top-left-radius:4px;
-    box-shadow: 0 0 22px -8px rgba(0,230,255,0.15);
+    border-top-left-radius:2px;
+    box-shadow: 0 0 22px -8px rgba(255,122,26,0.18);
     color: var(--text-hi);
   }
   .msg.ai .bubble.error{
-    border-color: rgba(255,84,112,0.4);
-    box-shadow: 0 0 22px -8px rgba(255,84,112,0.25);
-    color:#ffd7de;
+    border-color: rgba(255,61,0,0.5);
+    box-shadow: 0 0 22px -8px rgba(255,61,0,0.3);
+    color:#ffd7c2;
   }
   .timestamp{
     font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-dim);
@@ -186,11 +200,11 @@
   .typing{ display:flex; gap:5px; padding:14px 16px; align-items:center; }
   .typing span{
     width:6px; height:6px; border-radius:50%;
-    background: var(--cyan); box-shadow:0 0 8px var(--cyan);
+    background: var(--orange-hot); box-shadow:0 0 8px var(--orange-hot);
     animation: typing 1.1s ease-in-out infinite;
   }
-  .typing span:nth-child(2){ animation-delay:.15s; background:var(--violet); box-shadow:0 0 8px var(--violet);}
-  .typing span:nth-child(3){ animation-delay:.3s; background:var(--magenta); box-shadow:0 0 8px var(--magenta);}
+  .typing span:nth-child(2){ animation-delay:.15s; background:var(--amber); box-shadow:0 0 8px var(--amber);}
+  .typing span:nth-child(3){ animation-delay:.3s; background:var(--ember); box-shadow:0 0 8px var(--ember);}
   @keyframes typing{ 0%,60%,100%{ transform:translateY(0); opacity:.5; } 30%{ transform:translateY(-6px); opacity:1; } }
 
   /* ---------- input bar ---------- */
@@ -201,28 +215,28 @@
     flex:1; position:relative;
     background: var(--bg-panel);
     border:1px solid var(--line);
-    border-radius:16px;
+    border-radius:10px;
     transition: border-color .25s ease, box-shadow .25s ease;
     display:flex; align-items:center;
   }
   .input-wrap:focus-within{
-    border-color: var(--violet-soft);
-    box-shadow: 0 0 0 3px rgba(157,78,255,0.15), 0 0 24px -4px rgba(0,230,255,0.25);
+    border-color: var(--orange-hot);
+    box-shadow: 0 0 0 3px rgba(255,122,26,0.15), 0 0 24px -4px rgba(255,122,26,0.3);
   }
   textarea{
     flex:1; resize:none; background:transparent; border:none; outline:none;
-    color: var(--text-hi); font-family:'Space Grotesk', sans-serif; font-size:14.5px;
+    color: var(--text-hi); font-family:'Rajdhani', sans-serif; font-weight:500; font-size:15.5px;
     padding: 14px 16px; max-height:140px; line-height:1.5;
   }
   textarea::placeholder{ color: var(--text-dim); }
 
   .send-btn{
-    width:48px; height:48px; border-radius:14px; flex-shrink:0;
+    width:48px; height:48px; border-radius:10px; flex-shrink:0;
     border:none; cursor:pointer;
-    background: linear-gradient(135deg, var(--cyan), var(--violet) 55%, var(--magenta));
+    background: linear-gradient(135deg, var(--amber), var(--orange-hot) 55%, var(--ember));
     background-size:200% 200%;
     display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 0 24px -4px rgba(157,78,255,0.55);
+    box-shadow: 0 0 24px -4px rgba(255,122,26,0.6);
     transition: transform .2s ease, background-position .5s ease;
   }
   .send-btn:hover{ transform: translateY(-2px) scale(1.03); background-position:100% 50%; }
@@ -231,22 +245,22 @@
   .send-btn svg{ width:20px; height:20px; }
 
   .mic-btn{
-    width:48px; height:48px; border-radius:14px; flex-shrink:0;
+    width:48px; height:48px; border-radius:10px; flex-shrink:0;
     border:1px solid var(--line); cursor:pointer;
-    background: rgba(157,78,255,0.06); color: var(--text-mid);
+    background: rgba(255,122,26,0.06); color: var(--text-mid);
     display:flex; align-items:center; justify-content:center;
     transition: all .25s ease;
   }
-  .mic-btn:hover{ color:var(--text-hi); border-color: var(--violet-soft); box-shadow:0 0 16px rgba(157,78,255,0.35); }
+  .mic-btn:hover{ color:var(--text-hi); border-color: var(--orange-hot); box-shadow:0 0 16px rgba(255,122,26,0.35); }
   .mic-btn svg{ width:20px; height:20px; }
   .mic-btn.listening{
-    color:#fff; border-color: var(--danger); background: linear-gradient(135deg, var(--danger), var(--magenta));
-    box-shadow: 0 0 22px -2px rgba(255,84,112,0.7);
+    color:#fff; border-color: var(--danger); background: linear-gradient(135deg, var(--danger), var(--orange-hot));
+    box-shadow: 0 0 22px -2px rgba(255,61,0,0.7);
     animation: micpulse 1.1s ease-in-out infinite;
   }
   @keyframes micpulse{
-    0%,100%{ box-shadow: 0 0 14px -2px rgba(255,84,112,0.55); transform:scale(1); }
-    50%{ box-shadow: 0 0 26px 2px rgba(255,84,112,0.85); transform:scale(1.06); }
+    0%,100%{ box-shadow: 0 0 14px -2px rgba(255,61,0,0.55); transform:scale(1); }
+    50%{ box-shadow: 0 0 26px 2px rgba(255,61,0,0.85); transform:scale(1.06); }
   }
 
   .hint-row{
@@ -254,10 +268,10 @@
     margin-top:8px; padding:0 4px;
     font-family:'JetBrains Mono', monospace; font-size:10.5px; color: var(--text-dim);
   }
-  .hint-row .link{ color: var(--violet-soft); cursor:pointer; text-decoration:none; }
-  .hint-row .link:hover{ color: var(--cyan); }
+  .hint-row .link{ color: var(--orange); cursor:pointer; text-decoration:none; }
+  .hint-row .link:hover{ color: var(--amber); }
 
-  ::selection{ background: rgba(255,46,196,0.35); }
+  ::selection{ background: rgba(255,122,26,0.35); }
 
   @media (prefers-reduced-motion: reduce){
     *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
@@ -267,6 +281,7 @@
     .app{ padding:14px; }
     .core-big{ width:140px; height:140px; }
     .msg{ max-width:92%; }
+    .corner-frame{ display:none; }
   }
 </style>
 </head>
@@ -276,6 +291,7 @@
 <div class="mesh"></div>
 <div class="grid-overlay"></div>
 <div class="scanline"></div>
+<div class="corner-frame"></div>
 
 <div class="app">
 
@@ -283,7 +299,7 @@
     <div class="brand">
       <div class="core-mini" id="core-mini"></div>
       <div class="brand-text">
-        <h1>NEXUS</h1>
+        <h1>J.A.R.V.I.S.</h1>
         <div class="status"><span class="dot"></span><span id="status-text">EM ESPERA</span></div>
       </div>
     </div>
@@ -296,7 +312,7 @@
           <path d="M2 12A10 10 0 0 1 12 2"/>
         </svg>
       </button>
-      <button class="icon-btn active" id="voice-toggle-btn" aria-label="Ativar/desativar voz da NEXUS" title="Ativar/desativar a voz da NEXUS">
+      <button class="icon-btn active" id="voice-toggle-btn" aria-label="Ativar/desativar voz do JARVIS" title="Ativar/desativar a voz do JARVIS">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M11 5 6 9H2v6h4l5 4V5z"/>
           <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
@@ -308,18 +324,18 @@
 
   <div id="empty-state" class="core-stage">
     <div class="core-big" id="core-big"></div>
-    <h2>Sua inteligência, conectada.</h2>
-    <p>A NEXUS está pronta para pensar. Configure o webhook do seu fluxo n8n e comece a conversar em tempo real.</p>
-    <div class="pulse-hint" id="empty-hint">◆ conectada e pronta para conversar ◆</div>
+    <h2>Sistemas on-line, senhor.</h2>
+    <p>J.A.R.V.I.S. está pronto para operar. Configure o webhook do seu fluxo n8n e comece a conversar em tempo real.</p>
+    <div class="pulse-hint" id="empty-hint">◆ núcleo estável · aguardando comando ◆</div>
   </div>
 
   <div id="transcript" class="transcript" style="display:none;"></div>
 
   <div class="composer">
     <div class="input-wrap">
-      <textarea id="msg-input" rows="1" placeholder="Fale com a NEXUS..." maxlength="4000"></textarea>
+      <textarea id="msg-input" rows="1" placeholder="Fale com o JARVIS..." maxlength="4000"></textarea>
     </div>
-    <button class="mic-btn" id="mic-btn" aria-label="Falar com a NEXUS" title="Clique e fale">
+    <button class="mic-btn" id="mic-btn" aria-label="Falar com o JARVIS" title="Clique e fale">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
         <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
@@ -328,7 +344,7 @@
       </svg>
     </button>
     <button class="send-btn" id="send-btn" aria-label="Enviar mensagem">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#050012" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#060402" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M22 2L11 13"/>
         <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
       </svg>
@@ -348,9 +364,9 @@
 ========================================================= */
 let WEBHOOK_URL = "https://luizfell.app.n8n.cloud/webhook/myiaagent";
 
-const SESSION_ID = 'nexus-' + Math.random().toString(36).slice(2, 11);
+const SESSION_ID = 'jarvis-' + Math.random().toString(36).slice(2, 11);
 
-/* ---------------- Core / Orb (SVG generator) ---------------- */
+/* ---------------- Core / Orb (SVG generator) — estilo reator arc ---------------- */
 function buildCore(container, size){
   const s = size;
   const c = s/2;
@@ -358,23 +374,23 @@ function buildCore(container, size){
   <svg viewBox="0 0 ${s} ${s}">
     <defs>
       <radialGradient id="coreGlow-${s}" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#ffffff"/>
-        <stop offset="35%" stop-color="var(--cyan)"/>
+        <stop offset="0%" stop-color="#fff6ea"/>
+        <stop offset="35%" stop-color="var(--orange-hot)"/>
         <stop offset="100%" stop-color="transparent"/>
       </radialGradient>
       <linearGradient id="ringGrad-${s}" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="var(--cyan)"/>
-        <stop offset="50%" stop-color="var(--violet)"/>
-        <stop offset="100%" stop-color="var(--magenta)"/>
+        <stop offset="0%" stop-color="var(--amber)"/>
+        <stop offset="50%" stop-color="var(--orange-hot)"/>
+        <stop offset="100%" stop-color="var(--ember)"/>
       </linearGradient>
     </defs>
     <circle cx="${c}" cy="${c}" r="${s*0.16}" fill="url(#coreGlow-${s})" class="core-nucleus"/>
     <circle cx="${c}" cy="${c}" r="${s*0.30}" fill="none" stroke="url(#ringGrad-${s})" stroke-width="${Math.max(1.2,s*0.012)}" opacity="0.85" class="core-ring r1" stroke-dasharray="${s*0.6} ${s*0.6}"/>
-    <circle cx="${c}" cy="${c}" r="${s*0.40}" fill="none" stroke="var(--violet)" stroke-width="${Math.max(1,s*0.008)}" opacity="0.45" class="core-ring r2" stroke-dasharray="${s*0.15} ${s*0.25}"/>
-    <circle cx="${c}" cy="${c}" r="${s*0.48}" fill="none" stroke="var(--cyan)" stroke-width="${Math.max(0.8,s*0.006)}" opacity="0.3" class="core-ring r3" stroke-dasharray="${s*0.05} ${s*0.35}"/>
+    <circle cx="${c}" cy="${c}" r="${s*0.40}" fill="none" stroke="var(--orange-hot)" stroke-width="${Math.max(1,s*0.008)}" opacity="0.45" class="core-ring r2" stroke-dasharray="${s*0.15} ${s*0.25}"/>
+    <circle cx="${c}" cy="${c}" r="${s*0.48}" fill="none" stroke="var(--amber)" stroke-width="${Math.max(0.8,s*0.006)}" opacity="0.3" class="core-ring r3" stroke-dasharray="${s*0.05} ${s*0.35}"/>
   </svg>`;
   const svg = container.querySelector('svg');
-  svg.style.setProperty('--cyan', getComputedStyle(document.documentElement).getPropertyValue('--cyan'));
+  svg.style.setProperty('--orange-hot', getComputedStyle(document.documentElement).getPropertyValue('--orange-hot'));
   animateCore(container, s);
 }
 
@@ -425,7 +441,7 @@ resize();
 function initParticles(){
   particles = [];
   const count = Math.min(70, Math.floor((canvas.width*canvas.height)/22000));
-  const colors = ['#00e6ff','#ff2ec4','#9d4eff'];
+  const colors = ['#ff7a1a','#ffb347','#ff3d00'];
   for(let i=0;i<count;i++){
     particles.push({
       x: Math.random()*canvas.width,
@@ -549,7 +565,7 @@ async function sendMessage(){
   if(!text) return;
 
   if(!WEBHOOK_URL || WEBHOOK_URL.includes('seu-n8n.dominio.com')){
-    const b = addMessage('ai', 'Configure a URL do webhook direto no código (variável WEBHOOK_URL no início do script) para a NEXUS poder responder.');
+    const b = addMessage('ai', 'Configure a URL do webhook direto no código (variável WEBHOOK_URL no início do script) para o JARVIS poder responder.');
     b.classList.add('error');
     return;
   }
@@ -582,7 +598,7 @@ async function sendMessage(){
       let data;
       const raw = await res.text();
       try{ data = JSON.parse(raw); } catch(e){ data = raw; }
-      const reply = extractReply(data) || 'A NEXUS respondeu, mas o formato não foi reconhecido.';
+      const reply = extractReply(data) || 'O JARVIS respondeu, mas o formato não foi reconhecido.';
       addMessage('ai', reply);
       speak(reply);
     }
@@ -613,36 +629,39 @@ input.addEventListener('input', autoGrow);
 
 /* ================================================================
    SISTEMA DE VOZ — estilo J.A.R.V.I.S. (fala e ouve em pt-BR)
-   Só ativa o microfone quando o usuário diz "Jarvis".
+   Voz grave, masculina e controlada. Só ativa o microfone
+   quando o usuário diz "Jarvis".
 ================================================================= */
 const micBtn = document.getElementById('mic-btn');
 const voiceToggleBtn = document.getElementById('voice-toggle-btn');
 const wakeWordBtn = document.getElementById('wakeword-btn');
 
-let voiceEnabled = true;     // a NEXUS fala as respostas em voz alta
+let voiceEnabled = true;     // o JARVIS fala as respostas em voz alta
 let wakeWordMode = false;    // fica escutando em segundo plano à espera de "Jarvis!"
 let isListening = false;     // capturando o comando do usuário
 let wakeListening = false;   // escutando em segundo plano à espera da palavra-chave
 let wakeArmed = false;       // evita disparo duplicado no mesmo trecho de áudio
 let selectedVoice = null;
 
-/* ---- Escolhe automaticamente uma voz feminina em português ---- */
-function pickFemaleVoice(){
+/* ---- Escolhe automaticamente uma voz masculina e grave em português ---- */
+function pickMaleVoice(){
   const voices = window.speechSynthesis.getVoices();
   if(!voices.length) return null;
   const ptVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('pt'));
   const pool = ptVoices.length ? ptVoices : voices;
-  const femaleHints = ['female','mulher','maria','luciana','fernanda','vitória','vitoria','joana','helena','camila','google português do brasil'];
-  let found = pool.find(v => femaleHints.some(h => v.name.toLowerCase().includes(h)));
+  const maleHints = ['male','homem','daniel','ricardo','felipe','antonio','antônio','joão','joao','bruno','carlos','diego','rodrigo','google português do brasil'];
+  const femaleHints = ['female','mulher','maria','luciana','fernanda','vitória','vitoria','joana','helena','camila'];
+  let found = pool.find(v => maleHints.some(h => v.name.toLowerCase().includes(h)) && !femaleHints.some(h => v.name.toLowerCase().includes(h)));
+  if(!found) found = pool.find(v => !femaleHints.some(h => v.name.toLowerCase().includes(h)));
   if(!found) found = pool[0];
   return found;
 }
 if('speechSynthesis' in window){
-  window.speechSynthesis.onvoiceschanged = () => { selectedVoice = pickFemaleVoice(); };
-  selectedVoice = pickFemaleVoice();
+  window.speechSynthesis.onvoiceschanged = () => { selectedVoice = pickMaleVoice(); };
+  selectedVoice = pickMaleVoice();
 }
 
-/* ---- Fala o texto da IA com timbre feminino e "robótico" ---- */
+/* ---- Fala o texto da IA com timbre grave, calmo e "sintético", ao estilo JARVIS ---- */
 function speak(text, onDone){
   if(!voiceEnabled || !('speechSynthesis' in window)){ if(onDone) onDone(); return; }
   window.speechSynthesis.cancel();
@@ -650,8 +669,8 @@ function speak(text, onDone){
   const utter = new SpeechSynthesisUtterance(clean);
   utter.lang = 'pt-BR';
   if(selectedVoice) utter.voice = selectedVoice;
-  utter.pitch = 1.3;   // tom mais agudo e sintético
-  utter.rate = 1.03;   // cadência levemente acelerada, precisa
+  utter.pitch = 0.75;   // tom mais grave, sóbrio
+  utter.rate = 0.96;    // cadência calma e precisa, articulada
   utter.volume = 1;
 
   utter.onstart = () => {
@@ -769,9 +788,9 @@ function maybeResumeWakeWord(){
 
 function onWakeWordDetected(){
   stopWakeListening();
-  statusText.textContent = 'ATIVADA';
+  statusText.textContent = 'ATIVADO';
   setCoreState('speaking');
-  speak('Olá senhor..', () => { startListening(); });
+  speak('Às ordens, senhor.', () => { startListening(); });
 }
 
 function stopListeningUI(){
@@ -832,7 +851,7 @@ function updateWebhookIndicator(){
   const configured = WEBHOOK_URL && !WEBHOOK_URL.includes('seu-n8n.dominio.com');
   if(configured){
     webhookIndicator.textContent = 'webhook: conectado';
-    webhookIndicator.style.color = 'var(--cyan)';
+    webhookIndicator.style.color = 'var(--orange-hot)';
     statusText.textContent = 'ONLINE';
   } else {
     webhookIndicator.textContent = 'webhook: não configurado';
