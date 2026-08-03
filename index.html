@@ -907,7 +907,7 @@ function onWakeWordDetected(){
   stopWakeListening();
   statusText.textContent = 'ATIVADO';
   setCoreState('speaking');
-  speak('Às ordens, senhor.', () => { startListening(); });
+  speak('Oi!.', () => { startListening(); });
 }
 
 function stopListeningUI(){
