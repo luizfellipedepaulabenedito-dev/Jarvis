@@ -527,6 +527,23 @@ function setCoreState(state){
   coreBig.dataset.speed = speed;
 }
 
+// Saudação automática ao iniciar o JARVIS
+window.addEventListener('load', () => {
+  const hora = new Date().getHours();
+  let saudacao;
+
+  if (hora >= 5 && hora < 12) {
+    saudacao = 'Bom dia, senhor.';
+  } else if (hora >= 12 && hora < 18) {
+    saudacao = 'Boa tarde, senhor.';
+  } else {
+    saudacao = 'Boa noite, senhor.';
+  }
+
+  addMessage('ai', saudacao);
+  speak(saudacao);
+});
+  
 /* ---------------- Background particle field ---------------- */
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
