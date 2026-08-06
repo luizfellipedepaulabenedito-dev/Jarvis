@@ -809,15 +809,6 @@ function speak(text, onDone){
   window.speechSynthesis.speak(utter);
 }
 
-// Já começa a ouvir assim que o site carrega
-window.addEventListener('load', () => {
-  const stillSpeaking = window.speechSynthesis.speaking || window.speechSynthesis.pending;
-  const esperar = stillSpeaking ? 800 : 0; // pequena folga se a saudação ainda estiver falando
-
-  setTimeout(() => {
-    startListening();
-  }, esperar);
-});
   
 /* ---- Reconhecimento de fala (microfone) ---- */
 const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
