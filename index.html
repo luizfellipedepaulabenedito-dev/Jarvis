@@ -793,6 +793,7 @@ function speak(text, onDone){
   utter.onstart = () => {
     setCoreState('speaking');
     statusText.textContent = 'FALANDO';
+    maybeResumeWakeWord();
   };
   utter.onend = () => {
     setCoreState('idle');
@@ -914,11 +915,10 @@ function maybeResumeWakeWord(){
   if(!wakeWordMode || !wakeRecognition) return;
   if(isListening || wakeListening) return;
   setTimeout(() => {
-    const stillSpeaking = window.speechSynthesis.speaking || window.speechSynthesis.pending;
-    if(wakeWordMode && !isListening && !wakeListening && !stillSpeaking){
+    if(wakeWordMode && !isListening && !wakeListening){
       try{ wakeRecognition.start(); }catch(err){ /* já pode estar rodando */ }
     }
-  }, 450);
+  }, 300);
 }
 
 function onWakeWordDetected(){
