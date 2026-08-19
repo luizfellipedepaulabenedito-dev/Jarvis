@@ -758,56 +758,88 @@ let wakeWordMode = false;    // fica escutando em segundo plano à espera de "Ja
 let isListening = false;     // capturando o comando do usuário
 let wakeListening = false;   // escutando em segundo plano à espera da palavra-chave
 let wakeArmed = false;       // evita disparo duplicado no mesmo trecho de áudio
-let selectedVoice = null;
+/* ---- Configuração da voz ElevenLabs ----
+   ATENÇÃO: esta chave fica visível no código-fonte do site para qualquer
+   visitante (basta "Ver código-fonte"). Isso é aceitável só se o site
+   estiver protegido (como já está, pela tela de senha) e/ou se você usar
+   uma chave com permissão restrita apenas a Text-to-Speech e limite de uso
+   configurado no painel da ElevenLabs, para reduzir o risco de abuso. */
+const ELEVENLABS_API_KEY = '4ee2e27cf06261e87ec889214178510a559fcb1f81c52e352ebef40ed0cee6fa';
+const ELEVENLABS_VOICE_ID = 'jtE6dbPUTt2kchN89Uej';
+const ELEVENLABS_MODEL_ID = 'eleven_multilingual_v2';
 
-/* ---- Escolhe automaticamente uma voz masculina e grave em português ---- */
-function pickMaleVoice(){
-  const voices = window.speechSynthesis.getVoices();
-  if(!voices.length) return null;
-  const ptVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('pt'));
-  const pool = ptVoices.length ? ptVoices : voices;
-  const maleHints = ['male','homem','daniel','ricardo','felipe','antonio','antônio','joão','joao','bruno','carlos','diego','rodrigo','google português do brasil'];
-  const femaleHints = ['female','mulher','maria','luciana','fernanda','vitória','vitoria','joana','helena','camila'];
-  let found = pool.find(v => maleHints.some(h => v.name.toLowerCase().includes(h)) && !femaleHints.some(h => v.name.toLowerCase().includes(h)));
-  if(!found) found = pool.find(v => !femaleHints.some(h => v.name.toLowerCase().includes(h)));
-  if(!found) found = pool[0];
-  return found;
+let currentAudio = null; // referência ao áudio da ElevenLabs tocando no momento
+
+/* ---- Interrompe qualquer fala em andamento (ElevenLabs) ---- */
+function stopSpeaking(){
+  if(currentAudio){
+    try{ currentAudio.pause(); currentAudio.currentTime = 0; }catch(err){ /* ignora */ }
+    currentAudio = null;
+  }
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
 }
-if('speechSynthesis' in window){
-  window.speechSynthesis.onvoiceschanged = () => { selectedVoice = pickMaleVoice(); };
-  selectedVoice = pickMaleVoice();
-}
 
-/* ---- Fala o texto da IA com timbre grave, calmo e "sintético", ao estilo JARVIS ---- */
-function speak(text, onDone){
-  if(!voiceEnabled || !('speechSynthesis' in window)){ if(onDone) onDone(); return; }
-  window.speechSynthesis.cancel();
-  const clean = String(text).replace(/[*_#`~]/g, '');
-  const utter = new SpeechSynthesisUtterance(clean);
-  utter.lang = 'pt-BR';
-  if(selectedVoice) utter.voice = selectedVoice;
-  utter.pitch = 0.75;   // tom mais grave, sóbrio
-  utter.rate = 0.96;    // cadência calma e precisa, articulada
-  utter.volume = 1;
+/* ---- Fala o texto da IA usando a voz da ElevenLabs, ao estilo JARVIS ---- */
+async function speak(text, onDone){
+  if(!voiceEnabled){ if(onDone) onDone(); return; }
+  stopSpeaking();
+  const clean = String(text).replace(/[*_#`~]/g, '').trim();
+  if(!clean){ if(onDone) onDone(); return; }
 
-  utter.onstart = () => {
-    setCoreState('speaking');
-    statusText.textContent = 'FALANDO';
-    maybeResumeWakeWord();
-  };
-  utter.onend = () => {
+  setCoreState('speaking');
+  statusText.textContent = 'FALANDO';
+  maybeResumeWakeWord();
+
+  const finish = () => {
     setCoreState('idle');
-    statusText.textContent = 'ONLINE';
+    statusText.textContent = webhookIndicator.textContent.includes('conectado') ? 'ONLINE' : 'EM ESPERA';
     if(onDone) onDone();
     maybeResumeWakeWord();
   };
-  utter.onerror = () => {
-    setCoreState('idle');
-    statusText.textContent = 'ONLINE';
-    if(onDone) onDone();
-    maybeResumeWakeWord();
-  };
-  window.speechSynthesis.speak(utter);
+
+  try{
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'audio/mpeg',
+        'xi-api-key': ELEVENLABS_API_KEY
+      },
+      body: JSON.stringify({
+        text: clean,
+        model_id: ELEVENLABS_MODEL_ID,
+        voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true }
+      })
+    });
+
+    if(!response.ok){
+      throw new Error(`ElevenLabs respondeu com status ${response.status}`);
+    }
+
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
+    currentAudio = audio;
+
+    audio.onended = () => {
+      URL.revokeObjectURL(audioUrl);
+      if(currentAudio === audio) currentAudio = null;
+      finish();
+    };
+    audio.onerror = () => {
+      URL.revokeObjectURL(audioUrl);
+      if(currentAudio === audio) currentAudio = null;
+      finish();
+    };
+
+    await audio.play();
+  } catch(err){
+    console.error('Erro ao gerar voz com ElevenLabs:', err);
+    const b = addMessage('ai', 'Não foi possível gerar a voz pela ElevenLabs (verifique a chave de API, o ID da voz ou os créditos da conta). Resposta seguirá apenas em texto.');
+    b.classList.add('error');
+    if(currentAudio) currentAudio = null;
+    finish();
+  }
 }
 
   
@@ -939,7 +971,7 @@ function startListening(){
   if(!recognition) return;
   stopWakeListening();
   try{
-    window.speechSynthesis.cancel();
+    stopSpeaking();
     input.value = '';
     autoGrow();
     recognition.start();
@@ -962,7 +994,7 @@ micBtn?.addEventListener('click', () => {
 voiceToggleBtn?.addEventListener('click', () => {
   voiceEnabled = !voiceEnabled;
   voiceToggleBtn.classList.toggle('active', voiceEnabled);
-  if(!voiceEnabled) window.speechSynthesis.cancel();
+  if(!voiceEnabled) stopSpeaking();
 });
 
 wakeWordBtn?.addEventListener('click', () => {
