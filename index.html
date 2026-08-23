@@ -1078,6 +1078,14 @@ function commitUtterance(){
   const text = input.value.trim();
   finalTranscript = '';
   if(!text) return;
+
+  // Só envia se a fala começar com a palavra "jarvis"
+  if(!/^jarvis\b/i.test(text)){
+    input.value = '';
+    autoGrow();
+    return;
+  }
+
   sendMessage();
 }
 
